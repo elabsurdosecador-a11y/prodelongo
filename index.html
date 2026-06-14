@@ -203,17 +203,12 @@
       background:var(--good);
     }
 
-    .note,
     .status {
-      color:var(--muted);
+      color:#fff;
       font-size:12px;
       text-align:center;
       margin-top:8px;
       line-height:1.35;
-    }
-
-    .status {
-      color:#fff;
     }
 
     @media(max-width:950px) {
@@ -258,8 +253,8 @@
 
     <div class="login-box">
       <h2 id="loginTitle">Ingresar</h2>
-      <input id="usuario" type="text" placeholder="Nombre de usuario" />
-      <input id="password" type="password" placeholder="Contraseña" />
+      <input id="usuario" type="text" placeholder="Nombre de usuario" autocomplete="username" />
+      <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" />
       <button onclick="login()">Loguearme</button>
       <button class="secondary" onclick="crearUsuario()">Crear usuario</button>
       <button class="logout" onclick="logout()" style="display:none" id="logoutBtn">Salir</button>
@@ -279,22 +274,24 @@
     let partidos = [];
     let pronosticos = [];
 
-    function limpiarUsuario(nombre) {
-      return nombre
-        .trim()
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "");
-    }
-
-    function emailInterno(nombre) {
-      const limpio = limpiarUsuario(nombre);
-      return limpio + "@prodelongo.com";
-    }
-
     function setEstado(msg) {
       document.getElementById("estado").textContent = msg;
+    }
+
+    function guardarSesionLocal(usuario) {
+      localStorage.setItem("prodelongo_usuario", JSON.stringify(usuario));
+    }
+
+    function leerSesionLocal() {
+      try {
+        return JSON.parse(localStorage.getItem("prodelongo_usuario"));
+      } catch {
+        return null;
+      }
+    }
+
+    function borrarSesionLocal() {
+      localStorage.removeItem("prodelongo_usuario");
     }
 
     async function crearUsuario() {
@@ -305,40 +302,29 @@
         return setEstado("Completá usuario y contraseña.");
       }
 
-      if (limpiarUsuario(nombre).length < 3) {
-        return setEstado("El usuario debe tener al menos 3 letras o números.");
-      }
-
-      if (password.length < 6) {
-        return setEstado("La contraseña debe tener al menos 6 caracteres.");
-      }
-
-      const { data, error } = await client.auth.signUp({
-        email: emailInterno(nombre),
-        password: password
+      const { data, error } = await client.rpc("registrar_usuario", {
+        p_nombre: nombre,
+        p_password: password
       });
 
       if (error) {
         return setEstado("Error al crear usuario: " + error.message);
       }
 
-      const userId = data.user && data.user.id;
-
-      if (userId) {
-        const { error: perfilError } = await client.from("usuarios").upsert({
-          id: userId,
-          nombre: nombre,
-          password_hash: "supabase_auth",
-          rol: "jugador"
-        });
-
-        if (perfilError) {
-          return setEstado("Usuario creado en Auth, pero falló perfil: " + perfilError.message);
-        }
+      if (!data || data.length === 0) {
+        return setEstado("No se pudo crear el usuario.");
       }
 
-      setEstado("Usuario creado. Intentando entrar...");
-      await login();
+      usuarioActual = data[0];
+      guardarSesionLocal(usuarioActual);
+
+      document.getElementById("logoutBtn").style.display = "block";
+      document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
+      setEstado("Usuario creado y logueado.");
+
+      await cargarRanking();
+      await cargarPronosticos();
+      dibujarFixture();
     }
 
     async function login() {
@@ -349,41 +335,21 @@
         return setEstado("Completá usuario y contraseña.");
       }
 
-      const { data, error } = await client.auth.signInWithPassword({
-        email: emailInterno(nombre),
-        password: password
+      const { data, error } = await client.rpc("login_usuario", {
+        p_nombre: nombre,
+        p_password: password
       });
 
       if (error) {
         return setEstado("No pude entrar: " + error.message);
       }
 
-      let { data: perfil, error: perfilError } = await client
-        .from("usuarios")
-        .select("*")
-        .eq("id", data.user.id)
-        .maybeSingle();
-
-      if (!perfil) {
-        const { data: nuevoPerfil, error: nuevoPerfilError } = await client
-          .from("usuarios")
-          .insert({
-            id: data.user.id,
-            nombre: nombre,
-            password_hash: "supabase_auth",
-            rol: "jugador"
-          })
-          .select()
-          .single();
-
-        if (nuevoPerfilError) {
-          return setEstado("Entró en Auth, pero falló perfil: " + nuevoPerfilError.message);
-        }
-
-        perfil = nuevoPerfil;
+      if (!data || data.length === 0) {
+        return setEstado("Usuario o contraseña incorrectos.");
       }
 
-      usuarioActual = perfil;
+      usuarioActual = data[0];
+      guardarSesionLocal(usuarioActual);
 
       document.getElementById("logoutBtn").style.display = "block";
       document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
@@ -395,10 +361,9 @@
     }
 
     async function logout() {
-      await client.auth.signOut();
-
       usuarioActual = null;
       pronosticos = [];
+      borrarSesionLocal();
 
       document.getElementById("logoutBtn").style.display = "none";
       document.getElementById("loginTitle").textContent = "Ingresar";
@@ -478,7 +443,7 @@
       fixture.innerHTML = "";
 
       if (!partidos || partidos.length === 0) {
-        fixture.innerHTML = `<section class="group-card"><div class="note">Todavía no hay partidos cargados.</div></section>`;
+        fixture.innerHTML = `<section class="group-card"><div class="status">Todavía no hay partidos cargados.</div></section>`;
         return;
       }
 
@@ -584,29 +549,22 @@
       setEstado("Pronósticos guardados.");
       await cargarPronosticos();
       await cargarRanking();
+      dibujarFixture();
     }
 
     async function iniciar() {
       await cargarRanking();
       await cargarPartidos();
 
-      const { data } = await client.auth.getSession();
+      const sesion = leerSesionLocal();
 
-      if (data.session && data.session.user) {
-        const { data: perfil } = await client
-          .from("usuarios")
-          .select("*")
-          .eq("id", data.session.user.id)
-          .maybeSingle();
-
-        if (perfil) {
-          usuarioActual = perfil;
-          document.getElementById("logoutBtn").style.display = "block";
-          document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
-          setEstado("Sesión iniciada.");
-          await cargarPronosticos();
-          dibujarFixture();
-        }
+      if (sesion && sesion.id && sesion.nombre) {
+        usuarioActual = sesion;
+        document.getElementById("logoutBtn").style.display = "block";
+        document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
+        setEstado("Sesión iniciada.");
+        await cargarPronosticos();
+        dibujarFixture();
       }
     }
 
