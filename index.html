@@ -22,7 +22,10 @@ const SUPABASE_URL="https://udkujkdbdnbkmidcraqx.supabase.co";
 const SUPABASE_KEY="sb_publishable_zXUMOP2wW5uuT80pDjPw4g_uIzgt3tC";
 const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let usuarioActual=null, partidos=[], pronosticos=[];
-function emailInterno(nombre){return nombre.trim().toLowerCase().replace(/[^a-z0-9]/g,"")+"@prodelongo.local"}
+function emailInterno(nombre) {
+  const limpio = nombre.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+  return limpio + "@prodelongo.com";
+}
 function setEstado(msg){document.getElementById("estado").textContent=msg}
 async function crearUsuario(){const nombre=document.getElementById("usuario").value.trim();const password=document.getElementById("password").value;if(!nombre||!password)return setEstado("Completá usuario y contraseña.");if(password.length<6)return setEstado("La contraseña debe tener al menos 6 caracteres.");const {data,error}=await client.auth.signUp({email:emailInterno(nombre),password});if(error)return setEstado("Error al crear usuario: "+error.message);const userId=data.user?.id;if(userId){await client.from("usuarios").upsert({id:userId,nombre,password_hash:"supabase_auth",rol:"jugador"})}setEstado("Usuario creado. Ya podés entrar.");await login()}
 async function login(){const nombre=document.getElementById("usuario").value.trim();const password=document.getElementById("password").value;if(!nombre||!password)return setEstado("Completá usuario y contraseña.");const {data,error}=await client.auth.signInWithPassword({email:emailInterno(nombre),password});if(error)return setEstado("No pude entrar: "+error.message);const {data:perfil}=await client.from("usuarios").select("*").eq("id",data.user.id).single();usuarioActual=perfil||{id:data.user.id,nombre};document.getElementById("logoutBtn").style.display="block";document.getElementById("loginTitle").textContent="Hola, "+usuarioActual.nombre;setEstado("Logueado. Ya podés cargar pronósticos.");await cargarPronosticos();dibujarFixture()}
