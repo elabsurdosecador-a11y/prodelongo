@@ -5,39 +5,612 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Prodelongo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
-    :root{--card:#10233f;--card2:#0d1d35;--text:#f4f7fb;--muted:#9fb0c8;--line:#263c5d;--accent:#40c9ff;--good:#35d07f}
-    *{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top left,#183a66 0,transparent 34%),linear-gradient(180deg,#061326,#030914);color:var(--text);min-height:100vh}header{padding:24px 16px 12px;text-align:center}header h1{margin:0;font-size:34px}header p{margin:6px 0 0;color:var(--muted)}.topbar{max-width:1100px;margin:0 auto 18px;padding:0 14px;display:grid;grid-template-columns:1fr 260px;gap:14px}.ranking,.login-box,.group-card{background:rgba(16,35,63,.92);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 35px rgba(0,0,0,.28)}.ranking,.login-box{padding:14px}h2{margin:0 0 10px;font-size:17px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px 7px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}th{color:var(--muted);font-weight:600}input{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:#08182d;color:var(--text);margin-bottom:8px}button{border:0;border-radius:10px;padding:10px 12px;color:#00101f;background:var(--accent);font-weight:800;cursor:pointer;width:100%;margin-top:4px}.secondary{background:transparent;border:1px solid var(--accent);color:var(--accent)}.logout{background:#ffcc66}.fixture{max-width:1100px;margin:0 auto;padding:0 14px 30px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.group-card{padding:10px;min-width:0}.group-title{background:#f4f7fb;color:#10233f;border-radius:10px;text-align:center;font-weight:900;padding:7px;margin-bottom:8px;text-transform:uppercase;font-size:13px}.match{display:grid;grid-template-columns:1fr 38px 18px 38px 1fr;align-items:center;gap:5px;background:var(--card2);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:6px;margin-bottom:6px}.team{display:flex;align-items:center;gap:5px;min-width:0;font-size:12px;font-weight:800}.team.right{justify-content:flex-end;text-align:right}.team-name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.score{width:38px;height:30px;border-radius:9px;border:1px solid #36557e;background:#edf3fa;color:#071528;text-align:center;font-weight:900;font-size:15px;margin:0}.dash{text-align:center;color:var(--muted);font-weight:900}.save{margin-top:8px;background:var(--good)}.note,.status{color:var(--muted);font-size:12px;text-align:center;margin-top:8px;line-height:1.35}.status{color:#fff}@media(max-width:950px){.fixture{grid-template-columns:repeat(2,1fr)}.topbar{grid-template-columns:1fr}}@media(max-width:540px){header h1{font-size:26px}.fixture{grid-template-columns:1fr}.match{grid-template-columns:1fr 34px 14px 34px 1fr}.score{width:34px}}
+    :root {
+      --bg:#071528; --card:#10233f; --card2:#0d1d35; --text:#f4f7fb;
+      --muted:#9fb0c8; --line:#263c5d; --accent:#40c9ff; --good:#35d07f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top left,#183a66 0,transparent 34%),
+        linear-gradient(180deg,#061326,#030914);
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    header {
+      padding:24px 16px 12px;
+      text-align:center;
+    }
+
+    header h1 {
+      margin:0;
+      font-size:34px;
+    }
+
+    header p {
+      margin:6px 0 0;
+      color:var(--muted);
+    }
+
+    .topbar {
+      max-width:1100px;
+      margin:0 auto 18px;
+      padding:0 14px;
+      display:grid;
+      grid-template-columns:1fr 260px;
+      gap:14px;
+    }
+
+    .ranking,
+    .login-box,
+    .group-card {
+      background:rgba(16,35,63,.92);
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:0 12px 35px rgba(0,0,0,.28);
+    }
+
+    .ranking,
+    .login-box {
+      padding:14px;
+    }
+
+    h2 {
+      margin:0 0 10px;
+      font-size:17px;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+
+    th,td {
+      padding:8px 7px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:left;
+    }
+
+    th {
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    input {
+      width:100%;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#08182d;
+      color:var(--text);
+      margin-bottom:8px;
+    }
+
+    button {
+      border:0;
+      border-radius:10px;
+      padding:10px 12px;
+      color:#00101f;
+      background:var(--accent);
+      font-weight:800;
+      cursor:pointer;
+      width:100%;
+      margin-top:4px;
+    }
+
+    button:disabled {
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    .secondary {
+      background:transparent;
+      border:1px solid var(--accent);
+      color:var(--accent);
+    }
+
+    .logout {
+      background:#ffcc66;
+    }
+
+    .fixture {
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 14px 30px;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+    }
+
+    .group-card {
+      padding:10px;
+      min-width:0;
+    }
+
+    .group-title {
+      background:#f4f7fb;
+      color:#10233f;
+      border-radius:10px;
+      text-align:center;
+      font-weight:900;
+      padding:7px;
+      margin-bottom:8px;
+      text-transform:uppercase;
+      font-size:13px;
+    }
+
+    .match {
+      display:grid;
+      grid-template-columns:1fr 38px 18px 38px 1fr;
+      align-items:center;
+      gap:5px;
+      background:var(--card2);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:10px;
+      padding:6px;
+      margin-bottom:6px;
+    }
+
+    .team {
+      display:flex;
+      align-items:center;
+      gap:5px;
+      min-width:0;
+      font-size:12px;
+      font-weight:800;
+    }
+
+    .team.right {
+      justify-content:flex-end;
+      text-align:right;
+    }
+
+    .team-name {
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+
+    .score {
+      width:38px;
+      height:30px;
+      border-radius:9px;
+      border:1px solid #36557e;
+      background:#edf3fa;
+      color:#071528;
+      text-align:center;
+      font-weight:900;
+      font-size:15px;
+      margin:0;
+    }
+
+    .dash {
+      text-align:center;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .save {
+      margin-top:8px;
+      background:var(--good);
+    }
+
+    .note,
+    .status {
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      margin-top:8px;
+      line-height:1.35;
+    }
+
+    .status {
+      color:#fff;
+    }
+
+    @media(max-width:950px) {
+      .fixture { grid-template-columns:repeat(2,1fr); }
+      .topbar { grid-template-columns:1fr; }
+    }
+
+    @media(max-width:540px) {
+      header h1 { font-size:26px; }
+      .fixture { grid-template-columns:1fr; }
+      .match { grid-template-columns:1fr 34px 14px 34px 1fr; }
+      .score { width:34px; }
+    }
   </style>
 </head>
+
 <body>
-  <header><h1>🏆 Prodelongo</h1><p>Prode Mundial 2026</p><p>Marcador exacto: 3 pts · Ganador / empate / perdedor: 1 pt</p></header>
+  <header>
+    <h1>🏆 Prodelongo</h1>
+    <p>Prode Mundial 2026</p>
+    <p>Marcador exacto: 3 pts · Ganador / empate / perdedor: 1 pt</p>
+  </header>
+
   <section class="topbar">
-    <div class="ranking"><h2>Tabla de posiciones</h2><table><thead><tr><th>#</th><th>Participante</th><th>Pts</th><th>Exactos</th><th>G/E/P</th></tr></thead><tbody id="rankingBody"><tr><td colspan="5">Cargando...</td></tr></tbody></table></div>
-    <div class="login-box"><h2 id="loginTitle">Ingresar</h2><input id="usuario" type="text" placeholder="Nombre de usuario"/><input id="password" type="password" placeholder="Contraseña"/><button onclick="login()">Loguearme</button><button class="secondary" onclick="crearUsuario()">Crear usuario</button><button class="logout" onclick="logout()" style="display:none" id="logoutBtn">Salir</button><div class="status" id="estado">Sin login: podés ver la tabla. Para pronosticar, ingresá.</div></div>
+    <div class="ranking">
+      <h2>Tabla de posiciones</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Participante</th>
+            <th>Pts</th>
+            <th>Exactos</th>
+            <th>G/E/P</th>
+          </tr>
+        </thead>
+        <tbody id="rankingBody">
+          <tr><td colspan="5">Cargando...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="login-box">
+      <h2 id="loginTitle">Ingresar</h2>
+      <input id="usuario" type="text" placeholder="Nombre de usuario" />
+      <input id="password" type="password" placeholder="Contraseña" />
+      <button onclick="login()">Loguearme</button>
+      <button class="secondary" onclick="crearUsuario()">Crear usuario</button>
+      <button class="logout" onclick="logout()" style="display:none" id="logoutBtn">Salir</button>
+      <div class="status" id="estado">Sin login: podés ver la tabla. Para pronosticar, ingresá.</div>
+    </div>
   </section>
+
   <main class="fixture" id="fixture"></main>
-<script>
-const SUPABASE_URL="https://udkujkdbdnbkmidcraqx.supabase.co";
-const SUPABASE_KEY="sb_publishable_zXUMOP2wW5uuT80pDjPw4g_uIzgt3tC";
-const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let usuarioActual=null, partidos=[], pronosticos=[];
-function emailInterno(nombre) {
-  const limpio = nombre.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
-  return limpio + "@prodelongo.com";
-}
-function setEstado(msg){document.getElementById("estado").textContent=msg}
-async function crearUsuario(){const nombre=document.getElementById("usuario").value.trim();const password=document.getElementById("password").value;if(!nombre||!password)return setEstado("Completá usuario y contraseña.");if(password.length<6)return setEstado("La contraseña debe tener al menos 6 caracteres.");const {data,error}=await client.auth.signUp({email:emailInterno(nombre),password});if(error)return setEstado("Error al crear usuario: "+error.message);const userId=data.user?.id;if(userId){await client.from("usuarios").upsert({id:userId,nombre,password_hash:"supabase_auth",rol:"jugador"})}setEstado("Usuario creado. Ya podés entrar.");await login()}
-async function login(){const nombre=document.getElementById("usuario").value.trim();const password=document.getElementById("password").value;if(!nombre||!password)return setEstado("Completá usuario y contraseña.");const {data,error}=await client.auth.signInWithPassword({email:emailInterno(nombre),password});if(error)return setEstado("No pude entrar: "+error.message);const {data:perfil}=await client.from("usuarios").select("*").eq("id",data.user.id).single();usuarioActual=perfil||{id:data.user.id,nombre};document.getElementById("logoutBtn").style.display="block";document.getElementById("loginTitle").textContent="Hola, "+usuarioActual.nombre;setEstado("Logueado. Ya podés cargar pronósticos.");await cargarPronosticos();dibujarFixture()}
-async function logout(){await client.auth.signOut();usuarioActual=null;pronosticos=[];document.getElementById("logoutBtn").style.display="none";document.getElementById("loginTitle").textContent="Ingresar";setEstado("Sesión cerrada.");dibujarFixture()}
-async function cargarRanking(){const {data,error}=await client.from("ranking").select("*");const body=document.getElementById("rankingBody");if(error){body.innerHTML='<tr><td colspan="5">Error cargando ranking</td></tr>';return}body.innerHTML="";(data||[]).forEach((r,i)=>{body.innerHTML+=`<tr><td>${i+1}</td><td>${r.nombre}</td><td>${r.puntos}</td><td>${r.exactos}</td><td>${r.aciertos_gpe}</td></tr>`})}
-async function cargarPartidos(){const {data,error}=await client.from("partidos").select("*").order("grupo").order("fecha");if(error)return setEstado("Error cargando partidos: "+error.message);partidos=data||[];dibujarFixture()}
-async function cargarPronosticos(){if(!usuarioActual)return;const {data}=await client.from("pronosticos").select("*").eq("usuario_id",usuarioActual.id);pronosticos=data||[]}
-function getPronostico(partidoId){return pronosticos.find(p=>p.partido_id===partidoId)}
-function dibujarFixture(){const fixture=document.getElementById("fixture");fixture.innerHTML="";const grupos={};partidos.forEach(p=>{if(!grupos[p.grupo])grupos[p.grupo]=[];grupos[p.grupo].push(p)});Object.entries(grupos).forEach(([grupo,lista])=>{const card=document.createElement("section");card.className="group-card";card.innerHTML=`<div class="group-title">Grupo ${grupo}</div>`;lista.forEach(p=>{const pr=getPronostico(p.id);const disabled=!usuarioActual||p.cerrado?"disabled":"";card.innerHTML+=`<div class="match"><div class="team"><span class="team-name">${p.equipo_local}</span></div><input class="score" id="l_${p.id}" type="number" min="0" inputmode="numeric" value="${pr?.goles_local??""}" ${disabled}><div class="dash">-</div><input class="score" id="v_${p.id}" type="number" min="0" inputmode="numeric" value="${pr?.goles_visitante??""}" ${disabled}><div class="team right"><span class="team-name">${p.equipo_visitante}</span></div></div>`});card.innerHTML+=`<button class="save" onclick="guardarGrupo('${grupo}')" ${!usuarioActual?"disabled":""}>Guardar Grupo ${grupo}</button>`;fixture.appendChild(card)})}
-async function guardarGrupo(grupo){if(!usuarioActual)return setEstado("Primero tenés que ingresar.");const lista=partidos.filter(p=>p.grupo===grupo&&!p.cerrado);const registros=[];for(const p of lista){const gl=document.getElementById("l_"+p.id).value;const gv=document.getElementById("v_"+p.id).value;if(gl===""||gv==="")continue;registros.push({usuario_id:usuarioActual.id,partido_id:p.id,goles_local:Number(gl),goles_visitante:Number(gv)})}if(!registros.length)return setEstado("No hay pronósticos completos para guardar.");const {error}=await client.from("pronosticos").upsert(registros,{onConflict:"usuario_id,partido_id"});if(error)return setEstado("Error al guardar: "+error.message);setEstado("Pronósticos guardados.");await cargarPronosticos();await cargarRanking()}
-async function iniciar(){await cargarRanking();await cargarPartidos();const {data}=await client.auth.getSession();if(data.session?.user){const {data:perfil}=await client.from("usuarios").select("*").eq("id",data.session.user.id).single();usuarioActual=perfil;document.getElementById("logoutBtn").style.display="block";document.getElementById("loginTitle").textContent="Hola, "+usuarioActual.nombre;await cargarPronosticos();dibujarFixture()}}
-iniciar();
-</script>
+
+  <script>
+    const SUPABASE_URL = "https://udkujkdbdnbkmidcraqx.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_zXUMOP2wW5uuT80pDjPw4g_uIzgt3tC";
+
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let usuarioActual = null;
+    let partidos = [];
+    let pronosticos = [];
+
+    function limpiarUsuario(nombre) {
+      return nombre
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "");
+    }
+
+    function emailInterno(nombre) {
+      const limpio = limpiarUsuario(nombre);
+      return limpio + "@prodelongo.com";
+    }
+
+    function setEstado(msg) {
+      document.getElementById("estado").textContent = msg;
+    }
+
+    async function crearUsuario() {
+      const nombre = document.getElementById("usuario").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!nombre || !password) {
+        return setEstado("Completá usuario y contraseña.");
+      }
+
+      if (limpiarUsuario(nombre).length < 3) {
+        return setEstado("El usuario debe tener al menos 3 letras o números.");
+      }
+
+      if (password.length < 6) {
+        return setEstado("La contraseña debe tener al menos 6 caracteres.");
+      }
+
+      const { data, error } = await client.auth.signUp({
+        email: emailInterno(nombre),
+        password: password
+      });
+
+      if (error) {
+        return setEstado("Error al crear usuario: " + error.message);
+      }
+
+      const userId = data.user && data.user.id;
+
+      if (userId) {
+        const { error: perfilError } = await client.from("usuarios").upsert({
+          id: userId,
+          nombre: nombre,
+          password_hash: "supabase_auth",
+          rol: "jugador"
+        });
+
+        if (perfilError) {
+          return setEstado("Usuario creado en Auth, pero falló perfil: " + perfilError.message);
+        }
+      }
+
+      setEstado("Usuario creado. Intentando entrar...");
+      await login();
+    }
+
+    async function login() {
+      const nombre = document.getElementById("usuario").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!nombre || !password) {
+        return setEstado("Completá usuario y contraseña.");
+      }
+
+      const { data, error } = await client.auth.signInWithPassword({
+        email: emailInterno(nombre),
+        password: password
+      });
+
+      if (error) {
+        return setEstado("No pude entrar: " + error.message);
+      }
+
+      let { data: perfil, error: perfilError } = await client
+        .from("usuarios")
+        .select("*")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      if (!perfil) {
+        const { data: nuevoPerfil, error: nuevoPerfilError } = await client
+          .from("usuarios")
+          .insert({
+            id: data.user.id,
+            nombre: nombre,
+            password_hash: "supabase_auth",
+            rol: "jugador"
+          })
+          .select()
+          .single();
+
+        if (nuevoPerfilError) {
+          return setEstado("Entró en Auth, pero falló perfil: " + nuevoPerfilError.message);
+        }
+
+        perfil = nuevoPerfil;
+      }
+
+      usuarioActual = perfil;
+
+      document.getElementById("logoutBtn").style.display = "block";
+      document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
+      setEstado("Logueado. Ya podés cargar pronósticos.");
+
+      await cargarPronosticos();
+      dibujarFixture();
+      await cargarRanking();
+    }
+
+    async function logout() {
+      await client.auth.signOut();
+
+      usuarioActual = null;
+      pronosticos = [];
+
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("loginTitle").textContent = "Ingresar";
+      setEstado("Sesión cerrada.");
+
+      dibujarFixture();
+    }
+
+    async function cargarRanking() {
+      const { data, error } = await client
+        .from("ranking")
+        .select("*");
+
+      const body = document.getElementById("rankingBody");
+
+      if (error) {
+        body.innerHTML = `<tr><td colspan="5">Error cargando ranking: ${error.message}</td></tr>`;
+        return;
+      }
+
+      body.innerHTML = "";
+
+      if (!data || data.length === 0) {
+        body.innerHTML = `<tr><td colspan="5">Todavía no hay participantes.</td></tr>`;
+        return;
+      }
+
+      data.forEach((r, i) => {
+        body.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${r.nombre}</td>
+            <td>${r.puntos}</td>
+            <td>${r.exactos}</td>
+            <td>${r.aciertos_gpe}</td>
+          </tr>
+        `;
+      });
+    }
+
+    async function cargarPartidos() {
+      const { data, error } = await client
+        .from("partidos")
+        .select("*")
+        .order("grupo", { ascending: true })
+        .order("fecha", { ascending: true });
+
+      if (error) {
+        return setEstado("Error cargando partidos: " + error.message);
+      }
+
+      partidos = data || [];
+      dibujarFixture();
+    }
+
+    async function cargarPronosticos() {
+      if (!usuarioActual) return;
+
+      const { data, error } = await client
+        .from("pronosticos")
+        .select("*")
+        .eq("usuario_id", usuarioActual.id);
+
+      if (error) {
+        return setEstado("Error cargando pronósticos: " + error.message);
+      }
+
+      pronosticos = data || [];
+    }
+
+    function getPronostico(partidoId) {
+      return pronosticos.find(p => p.partido_id === partidoId);
+    }
+
+    function dibujarFixture() {
+      const fixture = document.getElementById("fixture");
+      fixture.innerHTML = "";
+
+      if (!partidos || partidos.length === 0) {
+        fixture.innerHTML = `<section class="group-card"><div class="note">Todavía no hay partidos cargados.</div></section>`;
+        return;
+      }
+
+      const grupos = {};
+
+      partidos.forEach(p => {
+        if (!grupos[p.grupo]) grupos[p.grupo] = [];
+        grupos[p.grupo].push(p);
+      });
+
+      Object.entries(grupos).forEach(([grupo, lista]) => {
+        const card = document.createElement("section");
+        card.className = "group-card";
+        card.innerHTML = `<div class="group-title">Grupo ${grupo}</div>`;
+
+        lista.forEach(p => {
+          const pr = getPronostico(p.id);
+          const disabled = !usuarioActual || p.cerrado ? "disabled" : "";
+
+          card.innerHTML += `
+            <div class="match">
+              <div class="team">
+                <span class="team-name">${p.equipo_local}</span>
+              </div>
+
+              <input
+                class="score"
+                id="l_${p.id}"
+                type="number"
+                min="0"
+                inputmode="numeric"
+                value="${pr?.goles_local ?? ""}"
+                ${disabled}
+              >
+
+              <div class="dash">-</div>
+
+              <input
+                class="score"
+                id="v_${p.id}"
+                type="number"
+                min="0"
+                inputmode="numeric"
+                value="${pr?.goles_visitante ?? ""}"
+                ${disabled}
+              >
+
+              <div class="team right">
+                <span class="team-name">${p.equipo_visitante}</span>
+              </div>
+            </div>
+          `;
+        });
+
+        card.innerHTML += `
+          <button
+            class="save"
+            onclick="guardarGrupo('${grupo}')"
+            ${!usuarioActual ? "disabled" : ""}
+          >
+            Guardar Grupo ${grupo}
+          </button>
+        `;
+
+        fixture.appendChild(card);
+      });
+    }
+
+    async function guardarGrupo(grupo) {
+      if (!usuarioActual) {
+        return setEstado("Primero tenés que ingresar.");
+      }
+
+      const lista = partidos.filter(p => p.grupo === grupo && !p.cerrado);
+      const registros = [];
+
+      for (const p of lista) {
+        const gl = document.getElementById("l_" + p.id).value;
+        const gv = document.getElementById("v_" + p.id).value;
+
+        if (gl === "" || gv === "") continue;
+
+        registros.push({
+          usuario_id: usuarioActual.id,
+          partido_id: p.id,
+          goles_local: Number(gl),
+          goles_visitante: Number(gv)
+        });
+      }
+
+      if (!registros.length) {
+        return setEstado("No hay pronósticos completos para guardar.");
+      }
+
+      const { error } = await client
+        .from("pronosticos")
+        .upsert(registros, { onConflict: "usuario_id,partido_id" });
+
+      if (error) {
+        return setEstado("Error al guardar: " + error.message);
+      }
+
+      setEstado("Pronósticos guardados.");
+      await cargarPronosticos();
+      await cargarRanking();
+    }
+
+    async function iniciar() {
+      await cargarRanking();
+      await cargarPartidos();
+
+      const { data } = await client.auth.getSession();
+
+      if (data.session && data.session.user) {
+        const { data: perfil } = await client
+          .from("usuarios")
+          .select("*")
+          .eq("id", data.session.user.id)
+          .maybeSingle();
+
+        if (perfil) {
+          usuarioActual = perfil;
+          document.getElementById("logoutBtn").style.display = "block";
+          document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
+          setEstado("Sesión iniciada.");
+          await cargarPronosticos();
+          dibujarFixture();
+        }
+      }
+    }
+
+    iniciar();
+  </script>
 </body>
 </html>
