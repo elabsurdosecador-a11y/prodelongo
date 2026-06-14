@@ -8,8 +8,16 @@
 
   <style>
     :root {
-      --bg:#071528; --card:#10233f; --card2:#0d1d35; --text:#f4f7fb;
-      --muted:#9fb0c8; --line:#263c5d; --accent:#40c9ff; --good:#35d07f;
+      --bg:#061326;
+      --card:#10233f;
+      --card2:#0d1d35;
+      --text:#f4f7fb;
+      --muted:#9fb0c8;
+      --line:#263c5d;
+      --accent:#40c9ff;
+      --good:#35d07f;
+      --warn:#ffcc66;
+      --danger:#ff6b6b;
     }
 
     * { box-sizing: border-box; }
@@ -39,19 +47,23 @@
       color:var(--muted);
     }
 
+    .layout {
+      max-width:1180px;
+      margin:0 auto;
+      padding:0 14px 32px;
+    }
+
     .topbar {
-      max-width:1100px;
-      margin:0 auto 18px;
-      padding:0 14px;
       display:grid;
-      grid-template-columns:1fr 260px;
-      gap:14px;
+      grid-template-columns:1fr 290px;
+      gap:16px;
+      margin-bottom:18px;
     }
 
     .ranking,
     .login-box,
     .group-card {
-      background:rgba(16,35,63,.92);
+      background:rgba(16,35,63,.94);
       border:1px solid var(--line);
       border-radius:16px;
       box-shadow:0 12px 35px rgba(0,0,0,.28);
@@ -59,12 +71,12 @@
 
     .ranking,
     .login-box {
-      padding:14px;
+      padding:16px;
     }
 
     h2 {
       margin:0 0 10px;
-      font-size:17px;
+      font-size:18px;
     }
 
     table {
@@ -81,7 +93,7 @@
 
     th {
       color:var(--muted);
-      font-weight:600;
+      font-weight:700;
     }
 
     input {
@@ -92,6 +104,7 @@
       background:#08182d;
       color:var(--text);
       margin-bottom:8px;
+      font-size:14px;
     }
 
     button {
@@ -100,7 +113,7 @@
       padding:10px 12px;
       color:#00101f;
       background:var(--accent);
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
       width:100%;
       margin-top:4px;
@@ -118,89 +131,7 @@
     }
 
     .logout {
-      background:#ffcc66;
-    }
-
-    .fixture {
-      max-width:1100px;
-      margin:0 auto;
-      padding:0 14px 30px;
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:14px;
-    }
-
-    .group-card {
-      padding:10px;
-      min-width:0;
-    }
-
-    .group-title {
-      background:#f4f7fb;
-      color:#10233f;
-      border-radius:10px;
-      text-align:center;
-      font-weight:900;
-      padding:7px;
-      margin-bottom:8px;
-      text-transform:uppercase;
-      font-size:13px;
-    }
-
-    .match {
-      display:grid;
-      grid-template-columns:1fr 38px 18px 38px 1fr;
-      align-items:center;
-      gap:5px;
-      background:var(--card2);
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:10px;
-      padding:6px;
-      margin-bottom:6px;
-    }
-
-    .team {
-      display:flex;
-      align-items:center;
-      gap:5px;
-      min-width:0;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .team.right {
-      justify-content:flex-end;
-      text-align:right;
-    }
-
-    .team-name {
-      overflow:hidden;
-      white-space:nowrap;
-      text-overflow:ellipsis;
-    }
-
-    .score {
-      width:38px;
-      height:30px;
-      border-radius:9px;
-      border:1px solid #36557e;
-      background:#edf3fa;
-      color:#071528;
-      text-align:center;
-      font-weight:900;
-      font-size:15px;
-      margin:0;
-    }
-
-    .dash {
-      text-align:center;
-      color:var(--muted);
-      font-weight:900;
-    }
-
-    .save {
-      margin-top:8px;
-      background:var(--good);
+      background:var(--warn);
     }
 
     .status {
@@ -209,18 +140,142 @@
       text-align:center;
       margin-top:8px;
       line-height:1.35;
+      min-height:18px;
     }
 
-    @media(max-width:950px) {
-      .fixture { grid-template-columns:repeat(2,1fr); }
+    .user-panel {
+      display:none;
+      margin-top:10px;
+      padding:10px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      background:#08182d;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .fixture {
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0, 1fr));
+      gap:16px;
+    }
+
+    .group-card {
+      padding:12px;
+      min-width:0;
+    }
+
+    .group-title {
+      background:#f4f7fb;
+      color:#10233f;
+      border-radius:10px;
+      text-align:center;
+      font-weight:1000;
+      padding:8px;
+      margin-bottom:10px;
+      text-transform:uppercase;
+      font-size:14px;
+      letter-spacing:.3px;
+    }
+
+    .match {
+      display:grid;
+      grid-template-columns:minmax(110px, 1.3fr) 46px 18px 46px minmax(110px, 1.3fr);
+      align-items:center;
+      gap:7px;
+      background:var(--card2);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:8px;
+      margin-bottom:8px;
+    }
+
+    .team {
+      min-width:0;
+      font-size:13px;
+      font-weight:900;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+
+    .team.right {
+      text-align:right;
+    }
+
+    .meta {
+      grid-column:1 / -1;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:-3px;
+      padding:0 2px 2px;
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+    }
+
+    .score {
+      width:46px;
+      height:34px;
+      border-radius:10px;
+      border:1px solid #36557e;
+      background:#edf3fa;
+      color:#071528;
+      text-align:center;
+      font-weight:1000;
+      font-size:16px;
+      margin:0;
+      padding:0;
+    }
+
+    .dash {
+      text-align:center;
+      color:var(--muted);
+      font-weight:1000;
+    }
+
+    .save {
+      margin-top:10px;
+      background:var(--good);
+    }
+
+    .empty {
+      padding:16px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .admin-box {
+      margin-top:10px;
+      display:none;
+    }
+
+    .admin-box h3 {
+      font-size:14px;
+      margin:12px 0 8px;
+      color:var(--warn);
+    }
+
+    @media(max-width:900px) {
       .topbar { grid-template-columns:1fr; }
+      .fixture { grid-template-columns:1fr; }
     }
 
-    @media(max-width:540px) {
-      header h1 { font-size:26px; }
-      .fixture { grid-template-columns:1fr; }
-      .match { grid-template-columns:1fr 34px 14px 34px 1fr; }
-      .score { width:34px; }
+    @media(max-width:520px) {
+      header h1 { font-size:27px; }
+      .layout { padding:0 10px 24px; }
+      .match {
+        grid-template-columns:minmax(80px, 1fr) 40px 14px 40px minmax(80px, 1fr);
+        gap:5px;
+        padding:7px;
+      }
+      .score {
+        width:40px;
+        height:32px;
+      }
+      .team {
+        font-size:12px;
+      }
     }
   </style>
 </head>
@@ -232,37 +287,43 @@
     <p>Marcador exacto: 3 pts · Ganador / empate / perdedor: 1 pt</p>
   </header>
 
-  <section class="topbar">
-    <div class="ranking">
-      <h2>Tabla de posiciones</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Participante</th>
-            <th>Pts</th>
-            <th>Exactos</th>
-            <th>G/E/P</th>
-          </tr>
-        </thead>
-        <tbody id="rankingBody">
-          <tr><td colspan="5">Cargando...</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <div class="layout">
+    <section class="topbar">
+      <div class="ranking">
+        <h2>Tabla de posiciones</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Participante</th>
+              <th>Pts</th>
+              <th>Exactos</th>
+              <th>G/E/P</th>
+            </tr>
+          </thead>
+          <tbody id="rankingBody">
+            <tr><td colspan="5">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
 
-    <div class="login-box">
-      <h2 id="loginTitle">Ingresar</h2>
-      <input id="usuario" type="text" placeholder="Nombre de usuario" autocomplete="username" />
-      <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" />
-      <button onclick="login()">Loguearme</button>
-      <button class="secondary" onclick="crearUsuario()">Crear usuario</button>
-      <button class="logout" onclick="logout()" style="display:none" id="logoutBtn">Salir</button>
-      <div class="status" id="estado">Sin login: podés ver la tabla. Para pronosticar, ingresá.</div>
-    </div>
-  </section>
+      <div class="login-box">
+        <h2 id="loginTitle">Ingresar</h2>
 
-  <main class="fixture" id="fixture"></main>
+        <input id="usuario" type="text" placeholder="Nombre de usuario" autocomplete="username" />
+        <input id="password" type="password" placeholder="Contraseña" autocomplete="current-password" />
+
+        <button onclick="login()">Loguearme</button>
+        <button class="secondary" onclick="crearUsuario()">Crear usuario</button>
+        <button class="logout" onclick="logout()" style="display:none" id="logoutBtn">Salir</button>
+
+        <div class="user-panel" id="userPanel"></div>
+        <div class="status" id="estado">Sin login: podés ver la tabla. Para pronosticar, ingresá.</div>
+      </div>
+    </section>
+
+    <main class="fixture" id="fixture"></main>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://udkujkdbdnbkmidcraqx.supabase.co";
@@ -294,6 +355,28 @@
       localStorage.removeItem("prodelongo_usuario");
     }
 
+    function pintarUsuario() {
+      const logoutBtn = document.getElementById("logoutBtn");
+      const loginTitle = document.getElementById("loginTitle");
+      const panel = document.getElementById("userPanel");
+
+      if (!usuarioActual) {
+        logoutBtn.style.display = "none";
+        loginTitle.textContent = "Ingresar";
+        panel.style.display = "none";
+        panel.innerHTML = "";
+        return;
+      }
+
+      logoutBtn.style.display = "block";
+      loginTitle.textContent = "Hola, " + usuarioActual.nombre;
+      panel.style.display = "block";
+      panel.innerHTML = `
+        <strong>Usuario:</strong> ${usuarioActual.nombre}<br>
+        <strong>Rol:</strong> ${usuarioActual.rol || "jugador"}
+      `;
+    }
+
     async function crearUsuario() {
       const nombre = document.getElementById("usuario").value.trim();
       const password = document.getElementById("password").value;
@@ -317,9 +400,8 @@
 
       usuarioActual = data[0];
       guardarSesionLocal(usuarioActual);
+      pintarUsuario();
 
-      document.getElementById("logoutBtn").style.display = "block";
-      document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
       setEstado("Usuario creado y logueado.");
 
       await cargarRanking();
@@ -350,9 +432,8 @@
 
       usuarioActual = data[0];
       guardarSesionLocal(usuarioActual);
+      pintarUsuario();
 
-      document.getElementById("logoutBtn").style.display = "block";
-      document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
       setEstado("Logueado. Ya podés cargar pronósticos.");
 
       await cargarPronosticos();
@@ -364,11 +445,8 @@
       usuarioActual = null;
       pronosticos = [];
       borrarSesionLocal();
-
-      document.getElementById("logoutBtn").style.display = "none";
-      document.getElementById("loginTitle").textContent = "Ingresar";
+      pintarUsuario();
       setEstado("Sesión cerrada.");
-
       dibujarFixture();
     }
 
@@ -412,7 +490,10 @@
         .order("fecha", { ascending: true });
 
       if (error) {
-        return setEstado("Error cargando partidos: " + error.message);
+        setEstado("Error cargando partidos: " + error.message);
+        partidos = [];
+        dibujarFixture();
+        return;
       }
 
       partidos = data || [];
@@ -420,7 +501,10 @@
     }
 
     async function cargarPronosticos() {
-      if (!usuarioActual) return;
+      if (!usuarioActual) {
+        pronosticos = [];
+        return;
+      }
 
       const { data, error } = await client
         .from("pronosticos")
@@ -428,7 +512,9 @@
         .eq("usuario_id", usuarioActual.id);
 
       if (error) {
-        return setEstado("Error cargando pronósticos: " + error.message);
+        setEstado("Error cargando pronósticos: " + error.message);
+        pronosticos = [];
+        return;
       }
 
       pronosticos = data || [];
@@ -438,12 +524,31 @@
       return pronosticos.find(p => p.partido_id === partidoId);
     }
 
+    function formatFecha(fecha) {
+      if (!fecha) return "";
+      try {
+        const d = new Date(fecha);
+        return d.toLocaleString("es-AR", {
+          day:"2-digit",
+          month:"2-digit",
+          hour:"2-digit",
+          minute:"2-digit"
+        });
+      } catch {
+        return "";
+      }
+    }
+
     function dibujarFixture() {
       const fixture = document.getElementById("fixture");
       fixture.innerHTML = "";
 
       if (!partidos || partidos.length === 0) {
-        fixture.innerHTML = `<section class="group-card"><div class="status">Todavía no hay partidos cargados.</div></section>`;
+        fixture.innerHTML = `
+          <section class="group-card">
+            <div class="empty">Todavía no hay partidos cargados.</div>
+          </section>
+        `;
         return;
       }
 
@@ -461,11 +566,21 @@
 
         lista.forEach(p => {
           const pr = getPronostico(p.id);
-          const disabled = !usuarioActual || p.cerrado ? "disabled" : "";
+          const bloqueado = p.cerrado;
+          const disabled = !usuarioActual || bloqueado ? "disabled" : "";
+          const fecha = formatFecha(p.fecha);
+          const resultadoReal = p.goles_local !== null && p.goles_visitante !== null
+            ? `Final: ${p.goles_local} - ${p.goles_visitante}`
+            : (bloqueado ? "Cerrado" : "Abierto");
 
           card.innerHTML += `
             <div class="match">
-              <div class="team">
+              <div class="meta">
+                <span>${fecha}</span>
+                <span>${resultadoReal}</span>
+              </div>
+
+              <div class="team" title="${p.equipo_local}">
                 <span class="team-name">${p.equipo_local}</span>
               </div>
 
@@ -491,7 +606,7 @@
                 ${disabled}
               >
 
-              <div class="team right">
+              <div class="team right" title="${p.equipo_visitante}">
                 <span class="team-name">${p.equipo_visitante}</span>
               </div>
             </div>
@@ -560,11 +675,12 @@
 
       if (sesion && sesion.id && sesion.nombre) {
         usuarioActual = sesion;
-        document.getElementById("logoutBtn").style.display = "block";
-        document.getElementById("loginTitle").textContent = "Hola, " + usuarioActual.nombre;
+        pintarUsuario();
         setEstado("Sesión iniciada.");
         await cargarPronosticos();
         dibujarFixture();
+      } else {
+        pintarUsuario();
       }
     }
 
